@@ -1,2 +1,3 @@
-# file-organizer
-A Python utility to organize files
+# Pynder file organizer
+
+A file organizer written in Python
