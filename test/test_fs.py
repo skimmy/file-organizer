@@ -2,12 +2,12 @@ import os
 import random
 import unittest
 
+from testing_util import random_file_name
 from pynder.fs import hash_file
 
 class FsTest(unittest.TestCase):
     def test_hash_file_md5(self):
-        rand = random.randint(100000000, 999999999)
-        file_path = f".fstest_{rand}"
+        file_path = random_file_name()
         f = open(file_path, "w")
         f.write("Hello World!")
         f.close()
