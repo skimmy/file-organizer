@@ -39,10 +39,31 @@ def create_schema(db: sqlite3.Connection, script: str=None):
         script = open("./sql/schema.sql").read()
     cur.executescript(script)
     
-def add_file(db: sqlite3.Connection, md5: str, path: str, publication: int=None):
-    pass
+def add_file(db: sqlite3.Connection, md5: str, path: str, publication: int=None, repository: int=None):
+    db.execute(
+        "INSERT INTO file VALUES (?, ?, ?);",
+        (md5, path, publication)
+    )
+    if repository:
+        db.execute(
+            "INSERT INTO repository_file VALUES(?, ?);",
+            (repository, md5)
+        )
+
+def add_repository(db: sqlite3.Connection, path: str, description: str):
+    cur = db.cursor()
+    cur.execute(
+        "INSERT INTO repository (description, path) VALUES (?, ?);",
+        (description, path)
+    )
+    db.commit()
+    print(cur.lastrowid)
+    return cur.lastrowid
 
 def list_of_files(db: sqlite3.Connection) -> list:
     result = db.execute(f"SELECT md5 FROM file;")
     return [row[0] for row in result]
 
+def list_of_repository(db: sqlite3.Connection) -> list:
+    result = db.execute(f"SELECT * FROM repository")
+    return result.fetchall()

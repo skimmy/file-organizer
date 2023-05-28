@@ -1,13 +1,12 @@
 BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS "publication" (
-	"id"	INT,
+	"id"	INTEGER PRIMARY KEY,
 	"isbn"	CHAR(13),
 	"title"	VARCHAR(128) NOT NULL,
 	"year"	INT,
 	"edition"	VARCHAR(128),
 	"publisher"	VARCHAR(128),
 	"verified"	BOOLEAN NOT NULL DEFAULT False,
-	PRIMARY KEY("id")
 );
 CREATE TABLE IF NOT EXISTS "file" (
 	"md5"	CHAR(32) NOT NULL,
@@ -17,23 +16,20 @@ CREATE TABLE IF NOT EXISTS "file" (
 	FOREIGN KEY("publication") REFERENCES "publication"("id")
 );
 CREATE TABLE IF NOT EXISTS "author" (
-	"id"	INT,
+	"id"	INTEGER PRIMARY KEY,
 	"first_name"	VARCHAR(64) NOT NULL,
 	"middle_name"	VARCHAR(64),
 	"last_name"	VARCHAR(64) NOT NULL,
-	PRIMARY KEY("id")
 );
 CREATE TABLE IF NOT EXISTS "topic" (
-	"id"	INT,
+	"id"	INTEGER PRIMARY KEY,
 	"name"	VARCHAR(128) NOT NULL,
 	UNIQUE("name"),
-	PRIMARY KEY("id")
 );
 CREATE TABLE IF NOT EXISTS "repository" (
-	"id"	INT,
+	"id"	INTEGER PRIMARY KEY,
 	"description"	TEXT,
-	"path"	VARCHAR(256),
-	PRIMARY KEY("id")
+	"path"	VARCHAR(256)
 );
 CREATE TABLE IF NOT EXISTS "author_pub" (
 	"id_author"	INT NOT NULL,
