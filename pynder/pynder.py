@@ -73,7 +73,10 @@ def open_or_create_db(path: str, overwrite: bool = True) -> sqlite3.Connection:
     return connection
 
 def add_repo(path: str, desc: str):
+    # Add repo first
     pass
+
+    # Scan and add each file
 
 def main():
     file = os.path.expanduser("~/.pynder.sqlite")
@@ -84,7 +87,7 @@ def main():
     con = open_or_create_db(file)
     running = True
     while running:
-        command = input("> ")
+        command = input(f"{os.path.basename(file)}> ")
         if command.lower() == 'help' or command.lower() == 'h':
             print()
             print("  Available commands")
@@ -98,7 +101,7 @@ def main():
         elif command.lower() == 'quit' or command.lower() == 'q':
             print("     Bye Bye...\n")
             running = False
-        elif command.lower() == 'file' or command.lower() == 'l':
+        elif command.lower() == 'file' or command.lower() == 'f':
             records = list_of_files(con)
             for record in records:
                 print("      ", record)
@@ -110,8 +113,6 @@ def main():
             path = input(f"      Directory")
             desc = input(f"      Description")
             add_repo(con, path, desc)
-            
-            
         else:
             print(f"      Command '{command}' not recognized, type 'h' for help.")
     con.close()

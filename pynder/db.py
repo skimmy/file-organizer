@@ -26,11 +26,15 @@ def has_schema(cur) -> bool:
     return table_exists
 
 def create_schema(db: sqlite3.Connection, script: str=None):
-    """_summary_
+    """Creates a schema, if not already existing.
+    
+    The function checks if the schema exists using `has_schema()` function.
+    If the schema is not detected this way, it is created with the `script`
+    passed (resorting to the default one this is none).
 
     Args:
-        db (sqlite3.Connection): _description_
-        script (str, optional): _description_. Defaults to None.
+        db (sqlite3.Connection): A connection to the database.
+        script (str, optional): Path to the creation script. Defaults to None (default script).
     """
     if has_schema(db.cursor()):
         return
