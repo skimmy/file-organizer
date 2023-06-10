@@ -17,9 +17,9 @@ ALL_TABLES = [
 ]
 
 TEST_FILE_RECORDS = [
-    ("12345678abcdabcd", "/tmp", None),
-    ("9876543210112233", "C:\\example.pdf", 1),
-    ("aabbccddeeff0000", "/home/users/books/lotr.pdf", 2)
+    ("12345678abcdabcd", None),
+    ("9876543210112233", 1),
+    ("aabbccddeeff0000", 2)
 ]
 
 TEST_REPO_RECORDS = [
@@ -37,7 +37,7 @@ class DbTest(unittest.TestCase):
         db.create_schema(self.db)
         for file_record in TEST_FILE_RECORDS:
             self.db.execute(
-                "INSERT INTO file VALUES(?, ?, ?);",
+                "INSERT INTO file VALUES(?, ?);",
                 file_record
             )
         for repo_record in TEST_REPO_RECORDS:
@@ -46,10 +46,10 @@ class DbTest(unittest.TestCase):
                 repo_record
             )
         self.db.executemany(
-            "INSERT INTO repository_file VALUES(?, ?);",
+            "INSERT INTO repository_file VALUES(?, ?, ?);",
             [
-                (2, "aabbccddeeff0000"),
-                (1, "12345678abcdabcd")
+                (2, "aabbccddeeff0000", "/tmp/file.txt"),
+                (1, "12345678abcdabcd", "C:\\USER\\info.ini")
             ]
         )
         self.db.commit()
@@ -128,7 +128,7 @@ class DbTest(unittest.TestCase):
         self.fillDb()
         md5 = "abcd1234abcd1234"
         path = "/tmp/foo.txt"
-        db.add_file(self.db, md5, path, None, 1)
+        db.add_file(self.db, md5, None, repository=1, path=path)
         result = self.db.execute(f"SELECT * FROM file WHERE md5='{md5}';")
         first = result.fetchone()
         self.assertIsNotNone(
@@ -138,7 +138,7 @@ class DbTest(unittest.TestCase):
         result = self.db.execute(f"SELECT * FROM repository_file WHERE id_file='{md5}';")
         results = result.fetchall()
         self.assertIn(
-            (1, md5),
+            (1, md5, path),
             results,
             msg="Entry not found in 'repository_file' table."
         )

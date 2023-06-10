@@ -43,15 +43,15 @@ def create_schema(db: sqlite3.Connection, script: str=None):
         script = open("./sql/schema.sql").read()
     cur.executescript(script)
     
-def add_file(db: sqlite3.Connection, md5: str, path: str, publication: int=None, repository: int=None):
+def add_file(db: sqlite3.Connection, md5: str, publication: int=None, repository: int=None, path: str=None):
     db.execute(
-        "INSERT INTO file VALUES (?, ?, ?);",
-        (md5, path, publication)
+        "INSERT INTO file VALUES (?, ?);",
+        (md5, publication)
     )
     if repository:
         db.execute(
-            "INSERT INTO repository_file VALUES(?, ?);",
-            (repository, md5)
+            "INSERT INTO repository_file VALUES(?, ?, ?);",
+            (repository, md5, path)
         )
 
 def add_repository(db: sqlite3.Connection, path: str, description: str):
