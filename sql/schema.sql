@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS "repository_file" (
 	"id_repo"	INT NOT NULL,
 	"id_file"	CHAR(32) NOT NULL,
 	"path"		VARCHAR(256),
-	PRIMARY KEY("id_repo","id_file"),
+	-- The primary key must be the whole tuple to model duplicated files in the same repo
+	PRIMARY KEY("id_repo","id_file", "path"),
 	FOREIGN KEY("id_repo") REFERENCES "repository"("id"),
 	FOREIGN KEY("id_file") REFERENCES "file"("md5")
 );

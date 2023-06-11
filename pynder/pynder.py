@@ -13,70 +13,18 @@
 # limitations under the License.
 # ==========================================================================
 
-import hashlib
 import os
-import sys
 import sqlite3
+import sys
 
 from db import list_of_files, list_of_repository, has_schema, create_schema
-
-
-# def list_to_db(files, db_name):
-#     con = sqlite3.connect(db_name)
-#     cur = con.cursor()
-#     cur.execute(
-#         "SELECT name FROM sqlite_master WHERE type='table' AND name='file';")
-#     table_exists = cur.fetchone() is not None
-#     if not table_exists:
-#         cur.execute("CREATE TABLE file (md5, path);")
-#     cur.executemany("INSERT INTO file VALUES(?, ?)", files)
-#     con.commit()
-#     con.close()
-
-
-# def md5_for_file(path):
-#     if not os.path.isfile(path):
-#         raise IOError(f'File not found: ${path}')
-#     content = None
-#     with open(path, 'rb') as f:
-#         content = f.read()
-#     if not content:
-#         raise Exception('Unable to read file content')
-#     h = hashlib.new('md5')
-#     h.update(content)
-#     return h.hexdigest()
-
-
-def for_each_file(path, operation, recursive=True):
-    dirs = []
-    for item in os.scandir(path):
-        if item.is_dir():
-            dirs.append(item.path)
-        if item.is_file(follow_symlinks=False):
-            operation(item.path)
-    if recursive:
-        for d in dirs:
-            for_each_file(d, operation, recursive)
-
-
-def db_for_dir(dir_path, db_path):
-    files = []
-    for_each_file(dir_path, lambda x: files.append(
-        (md5_for_file(x), x)), recursive=True)
-    list_to_db(files, db_path)
-
+from task import add_repo
 
 def open_or_create_db(path: str, overwrite: bool = True) -> sqlite3.Connection:
     connection = sqlite3.connect(path)
     if (not has_schema(connection.cursor())) and overwrite:
         create_schema(connection)
     return connection
-
-def add_repo(path: str, desc: str):
-    # Add repo first
-    pass
-
-    # Scan and add each file
 
 def main():
     file = os.path.expanduser("~/.pynder.sqlite")
@@ -110,9 +58,9 @@ def main():
             records = list_of_repository(con)
             print(f"      {len(records)} Total repositories")
         elif command.lower() == 'addrepo':
-            path = input(f"      Directory")
-            desc = input(f"      Description")
-            add_repo(con, path, desc)
+            path = input(f"      Directory: ")
+            desc = input(f"      Description: ")
+            add_repo(con, os.path.abspath(path), desc)
         else:
             print(f"      Command '{command}' not recognized, type 'h' for help.")
     con.close()
